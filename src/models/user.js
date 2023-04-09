@@ -10,11 +10,27 @@ class User extends Model {
             email: {
                 type:DataTypes.STRING,
                 allowNull: false,
+                unique: true,
                 validate: {
-                    isEmail: true
+                    notEmpty: {
+                        msg: 'Este campo não pode ficar vazio'
+                    },
+                    isEmail: {
+                        msg: 'Este email não é válido'
+                    }
                 }
             },
-            password: DataTypes.STRING,
+            password: {
+                type: DataTypes.STRING,
+                allowNull: true,
+                validate: {
+                    len: {
+                        args: [4, 16],
+                        msg: 'Este campo deve ter entre 4 e 16 caracteres'
+                    }
+                }
+                
+            }
 
         }, {
             sequelize, tableName: 'users'
