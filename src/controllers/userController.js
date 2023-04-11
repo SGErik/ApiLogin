@@ -7,24 +7,22 @@ module.exports = {
 
         try {
 
+            const bodyToken = req.headers.authorization
             const { email, password } = req.body
-
-
             const emailJWT = await User.findOne({where: { email }})
+            const token = jwt.sign( {emailJWT}, 'shhhhhhhhhhh' ) 
 
-
-            if (emailJWT.length == 0) {
-                res.status(400).json({ message: 'Email não registrado' })
-            } else if (!password) {
-                res.status(400).json({ message: 'Senha incorreta' })
+            if(bodyToken.length == 0){
+                res.status(400).json({message: 'Token Inválido'})
             }
-           const token = jwt.sign( {emailJWT}, 'shhhhhhhhhhh' ) 
+
+
         
         return res.json(token)
         
         
-        } catch (error) {
-            res.status(400).json({error})
+        } catch (e) {
+            
         }
 
 
@@ -39,16 +37,16 @@ module.exports = {
         try {
             const { name, email, password } = req.body
 
+        
+
             const user = await User.create({ name, email, password })
 
             res.status(200).json({ user })
         } catch (error) {
             if (error.name === 'SequelizeUniqueConstraintError') {
                 return res.status(400).json({ message: 'Já existe um usuário com este email' })
-            } else if (error.name = 'SequelizeValidationError') {
-                const errors = error.errors.map(err => err.message)
-                res.status(400).json({ errors })
-            } else {
+            } 
+             else {
                 res.status(400).json({ error })
             }
         }

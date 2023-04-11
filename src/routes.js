@@ -7,7 +7,7 @@ const myMiddleware = require('./middleware/authMiddleware')
 const router = Router()
 
 
-router.get('/users-list',  userController.listUsers)
+router.get('/users-list', myMiddleware, userController.listUsers)
 
 router.post('/users-create', userController.createUsers)
 

@@ -1,4 +1,5 @@
 const { Sequelize, Model, DataTypes } = require('sequelize')
+const bcrypt = require('bcrypt')
 
 
 class User extends Model {
@@ -35,7 +36,21 @@ class User extends Model {
         }, {
             sequelize, tableName: 'users'
         })
+        
+        // User.beforeSave(async (user) => {
+        //     if (user.changed('password')) {
+        //       const salt = await bcrypt.genSalt(10);
+        //       user.password = await bcrypt.hash(user.password, salt);
+        //     }
+        //   });
+
+        User.beforeCreate(async (user, options) => {
+            const hashedPassword = await bcrypt.hash(user.password, 10)
+            user.password = hashedPassword
+        })
+        
     }
+
 
 }
 
