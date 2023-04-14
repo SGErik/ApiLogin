@@ -1,5 +1,6 @@
 const User = require('../models/user')
 const jwt = require('jsonwebtoken')
+const bcrypt = require('bcrypt')
 
 module.exports = {
 
@@ -7,22 +8,26 @@ module.exports = {
 
         try {
 
-            const bodyToken = req.headers.authorization
             const { email, password } = req.body
-            const emailJWT = await User.findOne({where: { email }})
-            const token = jwt.sign( {emailJWT}, 'shhhhhhhhhhh' ) 
+            const user = await User.findOne({where: { email }})
+            const token = jwt.sign( {user}, 'shhhhhhhhhhh' ) 
 
-            if(bodyToken.length == 0){
-                res.status(400).json({message: 'Token Inválido'})
+            const passwordMatch = await bcrypt.compare(password, user.password)
+
+            if(user.email == email && passwordMatch){
+                
+                return res.json({user, token})
+            }else if (user.email == email && !passwordMatch) {
+                return res.status(401).json({message: 'Senha Inválida'})
             }
+            
 
 
         
-        return res.json(token)
         
         
         } catch (e) {
-            
+            return res.status(400).json({ message: 'Email não encontrado' })
         }
 
 
