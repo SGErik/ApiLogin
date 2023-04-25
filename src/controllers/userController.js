@@ -9,23 +9,23 @@ module.exports = {
         try {
 
             const { email, password } = req.body
-            const user = await User.findOne({where: { email }})
-            const token = jwt.sign( {user}, 'shhhhhhhhhhh' ) 
+            const user = await User.findOne({ where: { email } })
+            const token = jwt.sign({ user }, 'shhhhhhhhhhh')
 
             const passwordMatch = await bcrypt.compare(password, user.password)
 
-            if(user.email == email && passwordMatch){
-                
-                return res.json({user, token})
-            }else if (user.email == email && !passwordMatch) {
-                return res.status(401).json({message: 'Senha Inválida'})
+            if (user.email == email && passwordMatch) {
+
+                return res.json({ user, token })
+            } else if (user.email == email && !passwordMatch) {
+                return res.status(401).json({ message: 'Senha Incorreta' })
             }
-            
 
 
-        
-        
-        
+
+
+
+
         } catch (e) {
             return res.status(400).json({ message: 'Email não encontrado' })
         }
@@ -40,22 +40,43 @@ module.exports = {
 
     async createUsers(req, res) {
         try {
-            const { name, email, password } = req.body
+            const { name, email, password, confirmedPassword } = req.body
 
-        
+            if (password === confirmedPassword) {
 
-            const user = await User.create({ name, email, password })
+                const user = await User.create({ name, email, password })
 
-            res.status(200).json({ user })
+                res.status(200).json({ message: 'Usuário criado com sucesso', user })
+            } else {
+                res.status(400).json({ message: 'Senhas não coincidem' })
+            }
+
         } catch (error) {
             if (error.name === 'SequelizeUniqueConstraintError') {
                 return res.status(400).json({ message: 'Já existe um usuário com este email' })
-            } 
-             else {
+            } else {
                 res.status(400).json({ error })
             }
         }
     },
+
+    async oneUser(req, res) {
+        try {
+            const { id } = req.params
+            const user = await User.findOne({ where: { id } })
+            if (!user) {
+                return res.status(400).json({ message: 'Usuário não encontrado' })
+            }
+            res.status(200).json({ message: 'Usuário encontrado', user })
+
+        } catch (error) {
+            return res.status(400).json({ error })
+        }
+
+    },
+
+    
+
 
     async listUsers(req, res) {
         try {
@@ -65,20 +86,46 @@ module.exports = {
             }
             res.status(200).json({ users })
         } catch (error) {
-            res.status(400).json({ error })
+           return res.status(400).json({ error })
         }
     },
+
+    async updatePassword (req, res) {
+        try{
+            const { id } = req.params
+            const { prevPassword, password } = req.body
+            const user = await User.findOne({where: { id }})
+            const prevCompare = await bcrypt.compare(prevPassword, user.password)
+            
+            
+            if(prevPassword == password){
+                return res.status(400).json({message: 'Nova senha não pode ser a mesma que a anterior'})
+            }else if (!prevCompare){
+                return res.status(400).json({message: 'Senha antiga incorreta'})
+            }
+
+                await user.update({ password }, {where: { id }})
+                
+                return res.status(200).json({message: 'Senha Atualizada'})
+        
+        
+        }catch(error) {
+            res.status(400).json({ error: error })
+        }
+    
+    },
+
 
     async updateUsers(req, res) {
         try {
             const { id } = req.params
-            const { name, email, password } = req.body
+            const { name, email } = req.body
 
             const user = await User.findOne({ where: { id } })
             if (!user) {
                 res.status(400).json({ message: 'Não foi possível encontrar o usuário' })
             } else {
-                const user = await User.update({ name, email, password }, { where: { id } })
+                const user = await User.update({ name, email }, { where: { id } })
                 res.status(200).json({ message: 'Usuário atualizado', user })
             }
         } catch (error) {
@@ -98,7 +145,7 @@ module.exports = {
             }
 
         } catch (error) {
-            res.status(400).json({ error })
+            res.status(400).json({ message: 'Não foi possível deletar usuário' })
         }
     }
 

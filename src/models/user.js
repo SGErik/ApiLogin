@@ -14,7 +14,7 @@ class User extends Model {
                 unique: true,
                 validate: {
                     notEmpty: {
-                        msg: 'Este campo não pode ficar vazio'
+                        msg: 'O campo de email não pode ficar vazio'
                     },
                     isEmail: {
                         msg: 'Este email não é válido'
@@ -27,27 +27,42 @@ class User extends Model {
                 validate: {
                     len: {
                         args: [4, 16],
-                        msg: 'Este campo deve ter entre 4 e 16 caracteres'
+                        msg: 'A senha deve ter entre 4 e 16 caracteres'
                     }
                 }
                 
             }
 
         }, {
-            sequelize, tableName: 'users'
-        })
+            sequelize, tableName: 'users', hooks: {
+                beforeCreate: async (user, options) => {
+                    await hashPass(user, options)
+                },
+                beforeUpdate: async (user, options) => {
+                    await hashPass(user, options)
+                }
+            }
+        });
         
-        // User.beforeSave(async (user) => {
-        //     if (user.changed('password')) {
-        //       const salt = await bcrypt.genSalt(10);
-        //       user.password = await bcrypt.hash(user.password, salt);
-        //     }
-        //   });
+        
+        
+        
+    
+        
+        const hashPass = async (user, options) => {
+            if (user.password.length >= 4 || user.password.length <= 16){
+                
+                console.log('oi')
+                const hashPassword = await bcrypt.hash(user.password, 10)
 
-        User.beforeCreate(async (user, options) => {
-            const hashedPassword = await bcrypt.hash(user.password, 10)
-            user.password = hashedPassword
-        })
+                user.password = hashPassword
+                
+                return options.validate = false
+            }
+        }
+        
+
+        
         
     }
 
