@@ -21,11 +21,6 @@ module.exports = {
                 return res.status(401).json({ message: 'Senha Incorreta' })
             }
 
-
-
-
-
-
         } catch (e) {
             return res.status(400).json({ message: 'Email não encontrado' })
         }
@@ -148,6 +143,8 @@ module.exports = {
             res.status(400).json({ message: 'Não foi possível deletar usuário' })
         }
     }
+
+    
 
 
 }
