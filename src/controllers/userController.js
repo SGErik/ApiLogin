@@ -1,6 +1,7 @@
 const User = require('../models/user')
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcrypt')
+const cloudinary = require('../config/cloudinary')
 
 module.exports = {
 
@@ -30,16 +31,47 @@ module.exports = {
 
     },
 
+    async testUpload(req, res){
+        try{
+            
+            const file = req.files.image
+            const uploadFile = await cloudinary.uploader.upload(file.tempFilePath, {
+                public_id: `${Date.now()}`,
+                resource_type: 'auto',
+                folder: 'UserImage',
+                width: 300,
+                height: 300,
+                crop: 'scale'
+            })
 
+            return res.status(200).json({uploadFile})
+
+            
+        }catch(error){
+            console.log(error)
+            return res.status(400).json({ error })
+        }
+
+
+    },
 
 
     async createUsers(req, res) {
         try {
-            const { name, email, password, confirmedPassword } = req.body
+            const { name, email, password, confirmedPassword, image } = req.body
+
+            const uploadFile = await cloudinary.uploader.upload(image, {
+                public_id: `${Date.now()}`,
+                resource_type: 'auto',
+                folder: 'UserImage',
+                width: 300,
+                height: 300,
+                crop: 'scale'
+            })
 
             if (password === confirmedPassword) {
 
-                const user = await User.create({ name, email, password })
+                const user = await User.create({ name, email, password, url: uploadFile.secure_url})
 
                 res.status(200).json({ message: 'Usuário criado com sucesso', user })
             } else {

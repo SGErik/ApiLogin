@@ -31,6 +31,10 @@ class User extends Model {
                     }
                 }
                 
+            },
+            url: {
+                type: DataTypes.STRING,
+                allowNull: true
             }
 
         }, {
