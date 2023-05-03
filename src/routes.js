@@ -15,8 +15,6 @@ router.post('/users-create', userController.createUsers)
 
 router.post('/users-auth',   userController.authUsers)
 
-router.post('/testFile', userController.testUpload)
-
 router.put('/users-update/:id', authMiddleware, userController.updateUsers)
 
 router.put('/users-updatepass/:id', authMiddleware, userController.updatePassword)

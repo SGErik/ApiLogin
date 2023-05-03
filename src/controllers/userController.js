@@ -3,6 +3,7 @@ const jwt = require('jsonwebtoken')
 const bcrypt = require('bcrypt')
 const cloudinary = require('../config/cloudinary')
 
+
 module.exports = {
 
     async authUsers(req, res) {
@@ -31,47 +32,27 @@ module.exports = {
 
     },
 
-    async testUpload(req, res){
-        try{
-            
-            const file = req.files.image
-            const uploadFile = await cloudinary.uploader.upload(file.tempFilePath, {
-                public_id: `${Date.now()}`,
-                resource_type: 'auto',
-                folder: 'UserImage',
-                width: 300,
-                height: 300,
-                crop: 'scale'
-            })
-
-            return res.status(200).json({uploadFile})
-
-            
-        }catch(error){
-            console.log(error)
-            return res.status(400).json({ error })
-        }
-
-
-    },
-
 
     async createUsers(req, res) {
         try {
             const { name, email, password, confirmedPassword, image } = req.body
+            let imageUpload = {secure_url: ''}
+            
+            if(image){
 
-            const uploadFile = await cloudinary.uploader.upload(image, {
-                public_id: `${Date.now()}`,
-                resource_type: 'auto',
-                folder: 'UserImage',
-                width: 300,
-                height: 300,
-                crop: 'scale'
-            })
+                imageUpload = await cloudinary.uploader.upload(image, {
+                    public_id: `${Date.now()}`,
+                    resource_type: 'auto',
+                    folder: 'UserImage',
+                    width: 300,
+                    height: 300,
+                    crop: 'scale'
+                })
+            }
 
             if (password === confirmedPassword) {
 
-                const user = await User.create({ name, email, password, url: uploadFile.secure_url})
+                const user = await User.create({ name, email, password, url: imageUpload.secure_url })
 
                 res.status(200).json({ message: 'Usuário criado com sucesso', user })
             } else {
@@ -102,7 +83,7 @@ module.exports = {
 
     },
 
-    
+
 
 
     async listUsers(req, res) {
@@ -113,33 +94,33 @@ module.exports = {
             }
             res.status(200).json({ users })
         } catch (error) {
-           return res.status(400).json({ error })
+            return res.status(400).json({ error })
         }
     },
 
-    async updatePassword (req, res) {
-        try{
+    async updatePassword(req, res) {
+        try {
             const { id } = req.params
             const { prevPassword, password } = req.body
-            const user = await User.findOne({where: { id }})
+            const user = await User.findOne({ where: { id } })
             const prevCompare = await bcrypt.compare(prevPassword, user.password)
-            
-            
-            if(prevPassword == password){
-                return res.status(400).json({message: 'Nova senha não pode ser a mesma que a anterior'})
-            }else if (!prevCompare){
-                return res.status(400).json({message: 'Senha antiga incorreta'})
+
+
+            if (prevPassword == password) {
+                return res.status(400).json({ message: 'Nova senha não pode ser a mesma que a anterior' })
+            } else if (!prevCompare) {
+                return res.status(400).json({ message: 'Senha antiga incorreta' })
             }
 
-                await user.update({ password }, {where: { id }})
-                
-                return res.status(200).json({message: 'Senha Atualizada'})
-        
-        
-        }catch(error) {
+            await user.update({ password }, { where: { id } })
+
+            return res.status(200).json({ message: 'Senha Atualizada' })
+
+
+        } catch (error) {
             res.status(400).json({ error: error })
         }
-    
+
     },
 
 
@@ -176,7 +157,7 @@ module.exports = {
         }
     }
 
-    
+
 
 
 }
