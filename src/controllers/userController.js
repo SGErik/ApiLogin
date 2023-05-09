@@ -36,23 +36,23 @@ module.exports = {
     async createUsers(req, res) {
         try {
             const { name, email, password, confirmedPassword, image } = req.body
-            let imageUpload = {secure_url: ''}
+            let imageUpload = {secure_url: '', public_id: ''}
             
             if(image){
 
                 imageUpload = await cloudinary.uploader.upload(image, {
                     public_id: `${Date.now()}`,
-                    resource_type: 'auto',
+                    resource_type: 'image',
                     folder: 'UserImage',
                     width: 300,
                     height: 300,
-                    crop: 'scale'
+                    crop: 'fill'
                 })
             }
 
             if (password === confirmedPassword) {
 
-                const user = await User.create({ name, email, password, url: imageUpload.secure_url })
+                const user = await User.create({ name, email, password, url: imageUpload.secure_url, image_id: imageUpload.public_id})
 
                 res.status(200).json({ message: 'Usuário criado com sucesso', user })
             } else {
@@ -127,13 +127,36 @@ module.exports = {
     async updateUsers(req, res) {
         try {
             const { id } = req.params
-            const { name, email } = req.body
-
+            const { name, email, image } = req.body
             const user = await User.findOne({ where: { id } })
+            let imageUpload = {secure_url: user.url, public_id: user.image_id}
+            
+            if(image) {
+                imageUpload = await cloudinary.uploader.upload(image, {
+                    public_id: `${Date.now()}`,
+                    resource_type: 'image',
+                    folder: 'UserImage',
+                    width: 300,
+                    height: 300,
+                    crop: 'fill'
+                })
+            }
+
+            
+
             if (!user) {
                 res.status(400).json({ message: 'Não foi possível encontrar o usuário' })
             } else {
-                const user = await User.update({ name, email }, { where: { id } })
+                
+                if(image){
+                    const imageDelete = await cloudinary.uploader.destroy(user.image_id, {
+                        type: 'upload',
+                        resource_type: 'image'
+                    })
+                    
+                }
+
+                const userUpdate = await User.update({ name, email, url: imageUpload.secure_url, image_id: imageUpload.public_id }, { where: { id } })
                 res.status(200).json({ message: 'Usuário atualizado', user })
             }
         } catch (error) {
