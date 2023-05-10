@@ -148,12 +148,11 @@ module.exports = {
                 res.status(400).json({ message: 'Não foi possível encontrar o usuário' })
             } else {
                 
-                if(image){
+                if(image && user.image_id !== '' ){
                     const imageDelete = await cloudinary.uploader.destroy(user.image_id, {
                         type: 'upload',
                         resource_type: 'image'
                     })
-                    
                 }
 
                 const userUpdate = await User.update({ name, email, url: imageUpload.secure_url, image_id: imageUpload.public_id }, { where: { id } })
@@ -171,6 +170,12 @@ module.exports = {
             if (!user) {
                 res.status(400).json({ message: 'Usuário não encontrado' })
             } else {
+                if(user.image_id !== ''){
+                    const imageDelete = await cloudinary.uploader.destroy(user.image_id, {
+                        type: 'upload',
+                        resource_type: 'image'
+                    })
+                }
                 await User.destroy({ where: { id } })
                 res.status(200).json({ message: 'Usuário Deletado' })
             }
