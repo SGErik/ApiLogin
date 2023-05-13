@@ -39,7 +39,13 @@ class User extends Model {
             image_id: {
                 type: DataTypes.STRING,
                 allowNull: true
+            },
+            is_admin: {
+                type: DataTypes.BOOLEAN,
+                allowNull: false,
+                defaultValue: false
             }
+
 
         }, {
             sequelize, tableName: 'users', hooks: {

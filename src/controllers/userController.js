@@ -35,7 +35,7 @@ module.exports = {
 
     async createUsers(req, res) {
         try {
-            const { name, email, password, confirmedPassword, image } = req.body
+            const { name, email, password, confirmedPassword, image, is_admin } = req.body
             let imageUpload = {secure_url: '', public_id: ''}
             
             if(image){
@@ -44,15 +44,15 @@ module.exports = {
                     public_id: `${Date.now()}`,
                     resource_type: 'image',
                     folder: 'UserImage',
-                    width: 300,
-                    height: 300,
+                    width: 400,
+                    height: 400,
                     crop: 'fill'
                 })
             }
 
             if (password === confirmedPassword) {
 
-                const user = await User.create({ name, email, password, url: imageUpload.secure_url, image_id: imageUpload.public_id})
+                const user = await User.create({ name, email, password, url: imageUpload.secure_url, image_id: imageUpload.public_id, is_admin})
 
                 res.status(200).json({ message: 'Usuário criado com sucesso', user })
             } else {
@@ -136,8 +136,8 @@ module.exports = {
                     public_id: `${Date.now()}`,
                     resource_type: 'image',
                     folder: 'UserImage',
-                    width: 300,
-                    height: 300,
+                    width: 400,
+                    height: 400,
                     crop: 'fill'
                 })
             }
