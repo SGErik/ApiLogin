@@ -44,6 +44,10 @@ class User extends Model {
                 type: DataTypes.BOOLEAN,
                 allowNull: false,
                 defaultValue: false
+            },
+            telefone: {
+                type: DataTypes.STRING,
+                allowNull: true
             }
 
 
