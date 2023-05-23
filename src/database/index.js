@@ -1,7 +1,7 @@
 const { Sequelize } = require('sequelize')
 const configDB = require('../config/database')
 
-const sequelize = new Sequelize('postgresql://postgres:ziEDe6yVNm95i0k4tmIJ@containers-us-west-123.railway.app:6524/railway')
+const sequelize = new Sequelize('postgresql://postgres:pJDTEfTsuwrXASre@db.jprexkodbmttgtdnxsrp.supabase.co:5432/postgres')
 
 const connection = new Sequelize(configDB)
 

@@ -1,10 +1,10 @@
 module.exports = {
     dialect: 'postgres',
-    host: 'containers-us-west-123.railway.app',
+    host: 'db.jprexkodbmttgtdnxsrp.supabase.co',
     username: 'postgres',
-    password: 'ziEDe6yVNm95i0k4tmIJ',
-    database: 'railway',
-    port: '6524',
+    password: 'pJDTEfTsuwrXASre',
+    database: 'postgres',
+    port: '5432',
     define: {
         timestamp: true,
         underscore: true,
