@@ -4,8 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon src/index.js"
-  },
+    "start": "nodemon ./src/index.js",
+    "production": "node ./src/index.js"
+},
   "keywords": [],
   "author": "",
   "license": "ISC",
@@ -25,5 +26,8 @@
   "devDependencies": {
     "nodemon": "^2.0.22",
     "sequelize-cli": "^6.6.0"
+  },
+  "engines": {
+    "node": "16.x"
   }
 }
