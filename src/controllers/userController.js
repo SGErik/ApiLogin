@@ -127,7 +127,7 @@ module.exports = {
     async updateUsers(req, res) {
         try {
             const { id } = req.params
-            const { name, email, image } = req.body
+            const { name, email, image, is_admin } = req.body
             const user = await User.findOne({ where: { id } })
             let imageUpload = {secure_url: user.url, public_id: user.image_id}
             
@@ -155,7 +155,7 @@ module.exports = {
                     })
                 }
 
-                const userUpdate = await User.update({ name, email, url: imageUpload.secure_url, image_id: imageUpload.public_id }, { where: { id } })
+                const userUpdate = await User.update({ name, email, url: imageUpload.secure_url, image_id: imageUpload.public_id, is_admin }, { where: { id } })
                 res.status(200).json({ message: 'Usuário atualizado', user })
             }
         } catch (error) {
