@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "nodemon ./src/index.js",
-    "production": "node ./src/index.js"
+    "development": "node ./src/index.js"
 },
   "keywords": [],
   "author": "",
@@ -21,10 +21,10 @@
     "jsonwebtoken": "^9.0.0",
     "pg": "^8.10.0",
     "pg-hstore": "^2.3.4",
+    "nodemon": "^2.0.22",
     "sequelize": "^6.30.0"
   },
   "devDependencies": {
-    "nodemon": "^2.0.22",
     "sequelize-cli": "^6.6.0"
   },
   "engines": {
