@@ -63,7 +63,7 @@ class User extends Model {
         });
         
         
-        
+
         
     
         
@@ -79,9 +79,14 @@ class User extends Model {
             }
         }
         
+        return this;
+        
+        
+    }
 
-        
-        
+
+    static associate(models){
+        User.hasMany(models.Address, {foreignKey: 'user_id', as: 'addresses'})
     }
 
 
