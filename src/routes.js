@@ -9,7 +9,7 @@ const authMiddleware = require('./middleware/authMiddleware')
 const router = Router()
 
 
-router.get('/users-list',  authMiddleware, userController.listUsers)
+router.get('/users-list', userController.listUsers)
 
 router.get('/users-find/:id', authMiddleware, userController.oneUser)
 
